@@ -11,6 +11,51 @@
 #import "MyQueue.h"
 #import "MyPoint.h"
 
+struct nodequeue {
+    int x;
+    int y;
+    struct nodequeue * next;
+};
+typedef struct nodequeue node;
+int countQueue = 0;
+node * queueFirst = NULL;
+node * queueLast = NULL;
+
+node * dequeue()
+{
+    if (countQueue>0)
+    {
+        node * bk = queueFirst;
+        queueFirst = queueFirst->next;
+        countQueue--;
+        if (countQueue == 0)
+            queueLast = NULL;
+        //free(bk);
+        return bk;
+        
+    }
+    queueFirst = NULL;
+    queueLast = NULL;
+    return NULL;
+}
+void enqueue(node * obj)
+{
+    obj->next = NULL;
+    if (queueLast == NULL)
+    {
+        queueFirst = obj;
+        queueLast = obj;
+    }
+    else
+    {
+        queueLast->next = obj;
+        queueLast = obj;
+    }
+    
+    countQueue++;
+}
+
+
 unsigned char  tolerance[] = {0, 0, 0, 0};
 #define LENGHTCOLOR 4
 
@@ -52,8 +97,29 @@ unsigned char  tolerance[] = {0, 0, 0, 0};
     bitmapPixelFormatSize  = pixelFormatSize;
     
     bits = [ImageHelper convertUIImageToBitmapRGBA8:context.img];
+    
+    
+    countQueue = 0;
+    queueFirst = NULL;
+    queueLast = NULL;
 
 }
+-(bool)CheckPixel:(const int)px
+{
+    
+    return (
+            (
+             !(bits[px] == byteFillColor[0]  &&
+               bits[px + 1] == byteFillColor[1] &&
+               bits[px + 2] == byteFillColor[2] &&
+               bits[px + 3] == byteFillColor[3] )
+             ) &&
+            !(bits[px] == byteBoundColor[0]   && bits[px + 1] == byteBoundColor[1] && bits[px + 1] == byteBoundColor[1] &&
+              bits[px + 2]== byteBoundColor[2] &&
+              bits[px + 3] == byteBoundColor[3] )
+            );
+}
+/*
 -(bool)CheckPixel:(const int)px
 {
    
@@ -70,7 +136,8 @@ unsigned char  tolerance[] = {0, 0, 0, 0};
               (bits[px + 3] >= (byteBoundColor[3] - tolerance[3])) && bits[px + 3] <= (byteBoundColor[3] + tolerance[3]))
             );
 }
--(int)CoordsToByteIndex:(const  int)  _x withY:(const  int) _y
+*/ 
+-(int)CoordsToByteIndex:(const  int) _x withY:(const  int) _y
 {
     return (bitmapStride * _y) + (_x * bitmapPixelFormatSize);
 }
@@ -79,10 +146,11 @@ unsigned char  tolerance[] = {0, 0, 0, 0};
 {
     return (bitmapWidth * _y) + _x;
 }
--(bool)checkSeed:(MyPoint *) _p andQueue:( MyQueue *) _queue
+-(bool)checkSeed:(const int) _px withY: (const int) _py 
 {
-    int x, y;
-    x = _p.x; y = _p.y;
+   
+    int x , y;
+    x = _px; y = _py;
     //int idx = CoordsToByteIndex(ref x, ref y);
     int idx = [self CoordsToByteIndex:x withY:y];
     //if (!CheckPixel( idx))
@@ -93,38 +161,55 @@ unsigned char  tolerance[] = {0, 0, 0, 0};
     
     int h = 0;
     int x2, y2;
-    x2 = _p.x - h;
-    y2 = _p.y;
+    x2 = _px - h;
+    y2 = _py;
     //int idx2 = CoordsToByteIndex(ref x2, ref y2);
     int idx2 = [self CoordsToByteIndex:x2 withY:y2];
     //while (CheckPixel(ref idx2))
     while ([self CheckPixel:idx2])
     {
-        if (_p.x - h == 0)
+        if (_px - h == 0)
         {
             //_queue.Enqueue(new Point(0, _p.Y));
-            [_queue enqueue:[[MyPoint alloc] initWithX:0 withY:_p.y]];
+            //[_queue enqueue:[[MyPoint alloc] initWithX:0 withY:_p.y]];
+            node *obj = malloc(sizeof(node));
+            obj->x = 0;
+            obj->y = _py;
+            enqueue(obj);
             return true;
         }
         h++;
-        x2 = _p.x - h;
-        y2 = _p.y;
+        x2 = _px - h;
+        y2 = _py;
         //idx2 = CoordsToByteIndex(ref x2, ref y2);
         idx2 = [self CoordsToByteIndex:x2 withY:y2];
     }
     //_queue.Enqueue(new Point(_p.X - h + 1, _p.Y));
-    [_queue enqueue:[[MyPoint alloc] initWithX:_p.x - h + 1 withY:_p.y]];
+    //[_queue enqueue:[[MyPoint alloc] initWithX:_p.x - h + 1 withY:_p.y]];
+    node *newnode = malloc(sizeof(node));
+    newnode->x = _px - h + 1;
+    newnode->y = _py;
+    enqueue(newnode);
+    
     return true;
 }
+
+
 -(void)process:(const int)_x withY: (const int)_y
 {
-    MyQueue *queue = [[MyQueue alloc]init];
-    MyPoint *point = [[MyPoint alloc]initWithX:_x withY:_y];
-    [queue enqueue:point];
+    //MyQueue *queue = [[MyQueue alloc]init];
+    //MyPoint *point = [[MyPoint alloc]initWithX:_x withY:_y];
+    //[queue enqueue:point];
+    node *obj = malloc(sizeof(node));
+    obj->x = _x;
+    obj->y = _y;
+    enqueue(obj);
     
-    while (queue.count > 0)
+    while (countQueue > 0)
     {
-        MyPoint *P = [queue dequeue];
+        node *k = dequeue();
+        node P = *k;
+        
         int increaseX = 0;
         bool havePointUpQueue = false;
         bool havePointDownQueue = false;
@@ -152,10 +237,11 @@ unsigned char  tolerance[] = {0, 0, 0, 0};
             
             if (!havePointUpQueue)
                 //if (checkSeed(new Point(P.X + increaseX, P.Y + 1), queue)) 
-                    if ([self checkSeed:[[MyPoint alloc]initWithX:P.x + increaseX withY:P.y + 1] andQueue:queue])                               havePointUpQueue = true;
+                    if ([self checkSeed:P.x + increaseX withY:P.y + 1])   
+                        havePointUpQueue = true;
             if (!havePointDownQueue)
                 //if (checkSeed(new Point(P.X + increaseX, P.Y - 1), queue)) 
-                if ([self checkSeed:[[MyPoint alloc]initWithX:P.x + increaseX withY:P.y - 1] andQueue:queue])
+                if ([self checkSeed:P.x + increaseX withY:P.y - 1] )
                     havePointDownQueue = true;
             
             int idxUp2;

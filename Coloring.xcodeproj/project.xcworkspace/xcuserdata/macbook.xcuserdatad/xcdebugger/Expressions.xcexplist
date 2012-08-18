@@ -45,6 +45,28 @@
             <PersistentString
                value = "P.x">
             </PersistentString>
+            <PersistentString
+               value = "countQueue">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "enqueue:QueueLinearFloodFill.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "queue">
+            </PersistentString>
+            <PersistentString
+               value = "countQueue">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[QueueLinearFloodFill CoordsToByteIndex:withY:]:QueueLinearFloodFill.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "countQueue">
+            </PersistentString>
          </PersistentStrings>
       </ContextState>
    </ContextStates>
