@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "-[ViewController customImage:]:ViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "i">
+            </PersistentString>
+            <PersistentString
+               value = "pixelBytes[6]">
+            </PersistentString>
+            <PersistentString
+               value = "pixelBytes[1]">
+            </PersistentString>
+            <PersistentString
+               value = "[pixelBytes length]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[QueueLinearFloodFill prepare:]:QueueLinearFloodFill.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "bits[2088]">
+            </PersistentString>
+            <PersistentString
+               value = "byteBoundColor[1]">
+            </PersistentString>
+            <PersistentString
+               value = "byteBoundColor[3]">
+            </PersistentString>
+            <PersistentString
+               value = "byteBoundColor[0]">
+            </PersistentString>
+            <PersistentString
+               value = "byteBoundColor[2]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[QueueLinearFloodFill process:withY:]:QueueLinearFloodFill.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "P.x">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
