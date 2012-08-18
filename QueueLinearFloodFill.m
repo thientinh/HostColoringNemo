@@ -8,8 +8,7 @@
 
 #import "QueueLinearFloodFill.h"
 #import "ImageHelper.h"
-#import "MyQueue.h"
-#import "MyPoint.h"
+
 
 struct nodequeue {
     int x;
